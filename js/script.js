@@ -18,8 +18,11 @@
 
       // display employees
       this.displayEmployees();
+
+      // function
+      this.menu();
     }
-  }
+ 
 
   // Instantiates the main class
   new Main();
@@ -33,6 +36,11 @@
       this.Pay = 0;
     }
   }
+
+
+
+
+
 
   //part time class
   // child class
@@ -68,6 +76,71 @@
       this.salary = this.PayRate * this.hours * 52 - 1000;
     }
   }
+
+   showEmployees() {
+      console.log("Employees Tracker Assignmanet 4.4 By Kari Ganson");
+      //   maybe add something here
+
+      this.employees.forEach((emp, index) => {
+        console.log(
+          `${index + 1}\t${emp.salary}\t${emp.hours}\t${emp.payRate}\t${
+            emp.employeeType
+          }`
+        );
+      });
+    }
+  }
+
+    showEmployees() {
+      console.log("Employees Tracker Assignmanet 4.4 By Kari Ganson");
+      //   maybe add something here
+
+      this.employees.forEach((emp, index) => {
+        console.log(
+          `${index + 1}\t${emp.salary}\t${emp.hours}\t${emp.payRate}\t${
+            emp.employeeType
+          }`
+        );
+      });
+    }
+  
+
+  addEmployee(){
+    const input = prompt("Enter the employee you whant to adds name, age, pay rate, hours worked here to add them to the list seperated by commas");
+
+    const [name, payRateStr, hourStr] = input.split(",");
+    const age = parsent(ageStr);
+    const payRate = parseFloat(payRateStr);
+    const hours = parseFloat(hoursStr);
+
+
+    // add new employess and filter what type they are (part-time or managers)
+   let newEmployees;
+   if(hours >= 40) {
+    newEmployees = new Manager(name, age, payRate, hours);
+   }else {
+    newEmployees = new Parttime(name, age, payRate, hours);
+   }
+
+   this.employees.push(newEmployees);
+   this.displayEmployees();
+
+
+
+  }
+
+
+    removeEmployhee() {
+        const input = prompt("What Employee Would You Like to Remove From The List?");
+        const id = parseInt(input);
+        if (!NaN(id)) {(
+            this.employees.splice(id - 1, 1);
+        } else {
+            this.employees.this.employees.filter(emp => emp.name.toLower)
+        }
+    }
+
+ 
 
   // end of IIFE
 })();
