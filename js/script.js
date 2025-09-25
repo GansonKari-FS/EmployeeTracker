@@ -34,13 +34,30 @@
       this.payRate = payrate;
       this.hours = hours;
       this.employeeType = "Part-Time";
-      this.calculatedPay();
+      this.calculatePartTimePay();
     }
-   
+
     // claculated Pay function for part time employees
-    calculatedPay() {
+    calculatePartTimePay() {
       this.salary = this.payRate * this.hours * 52;
     }
   }
+
+  //managers
+  // child of employee class
+  class Managers extends Employee {
+    constructor(name, age, payRate, hours) {
+      super(name, age);
+      this.payRate = payRate;
+      this.hours = hours;
+      this.employeeType = "Manager";
+      this.calculateManagersPay();
+    }
+    calculateManagersPay() {
+      // - 1000 FOR INSURANCE
+      this.salary = this.PayRate * this.hours * 52 - 1000;
+    }
+  }
+
   // end of IIFE
 })();
