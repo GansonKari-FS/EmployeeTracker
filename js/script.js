@@ -36,6 +36,11 @@
       this.employeeType = "Part-Time";
       this.calculatedPay();
     }
+   
+    // claculated Pay function for part time employees
+    calculatedPay() {
+      this.salary = this.payRate * this.hours * 52;
+    }
   }
   // end of IIFE
 })();
