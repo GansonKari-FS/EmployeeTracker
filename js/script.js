@@ -7,7 +7,17 @@
   class Main {
     // constructor
     constructor() {
-      // properties
+      this.employees = [];
+
+      // the three tpyes of employees
+      this.employees.push(new PartTime("Jennifer", 25, 15, 10));
+
+      this.employees.push(new Managers("Steve", 40, 20, 15));
+
+      this.employees.push(new PartTime("Jeff", 30, 17, 16));
+
+      // display employees
+      this.displayEmployees();
     }
   }
 
