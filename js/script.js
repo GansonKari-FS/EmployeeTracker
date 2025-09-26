@@ -1,149 +1,145 @@
-//console.log("I am working!");
-
 // IIFE
-
 (function () {
- 
-    // the main class
- class MainClass {
- // constructor
-  constructor() {
-  // empty array for employees 
-  this.employees = [];
-
- // employees, the type and hours they worked
- this.employees.push(new PartTime("Jennifer Sanders", 25, 15, 10));
- this.employees.push(new PartTime("Sally Johnson", 33, 12, 10));
- this.employees.push(new PartTime("Jeff Ganson", 30, 17, 16));
- this.employees.push(new Managers("Steve Thibodeaux", 40, 20, 15));
-this.employees.push(new Managers("Brooke Barker", 20, 20, 15));
-
-this.displayEmployees();
- this.menu();
- 
-}
-
- // display employees information in console
- displayEmployees() {
- console.log("Employees Tracker");
- console.log("ID\tName\tSalary\tHours\tPayRate\tType");
-  
- this.employees.forEach((emp, index) => {
-  console.log( `${index + 1}\t${emp.salary}\t${emp.hours}\t${emppayRate}\t${emp.employeeType}`):
- });
-}
-  // add a new employee 
- addAEmployee() {
-const input = prompt("To add an employee to the list enter their name, age, pay rate, hours worked seperated by commas here");
-
-// fetch the name, age, payrate, and hours from input  
-const [name,ageStr, payRateStr, hourStr] = input.split(",");
-const age = parseInt(ageStr);
-const payRate = parseFloat(payRateStr);
-const hours = parseFloat(hoursStr);
-
-  
- // add new employess and filter what type they are (part-time or managers) 
- let newEmployee;
-   if(hours >= 40) {
-    newEmployee = new Manager(name, age, payRate, hours);
-   } else {
-    newEmployee = new Parttime(name, age, payRate, hours);
-   }
-
-   this.employees.push(newEmployee);
-   this.displayEmployees();
-}
-
-
-     }
-
-  // Instantiates the main class
-  new Main();
-
-  // employee class
+  // Employee class
   class Employee {
-    // constructor
     constructor(name, age) {
       this.name = name;
       this.age = age;
-      this.Pay = 0;
+      this.salary = 0;
     }
   }
 
-
-
-  //part time class
-  // child class
+  // Part-Time class
   class PartTime extends Employee {
-    // constructor
     constructor(name, age, payRate, hours) {
-      // super taken from employee
       super(name, age);
-      this.payRate = payrate;
+      this.payRate = payRate;
       this.hours = hours;
       this.employeeType = "Part-Time";
       this.calculatePartTimePay();
     }
 
-    // claculated Pay function for part time employees
+    // pay for part time employee
     calculatePartTimePay() {
       this.salary = this.payRate * this.hours * 52;
     }
   }
 
-  //managers
-  // child of employee class
-  class Managers extends Employee {
+  // Manager class
+  class Manager extends Employee {
     constructor(name, age, payRate, hours) {
       super(name, age);
       this.payRate = payRate;
       this.hours = hours;
       this.employeeType = "Manager";
-      this.calculateManagersPay();
+      this.calculateManagerPay();
     }
-    calculateManagersPay() {
-      // - 1000 FOR INSURANCE
-      this.salary = this.PayRate * this.hours * 52 - 1000;
+
+    calculateManagerPay() {
+      this.salary = this.payRate * this.hours * 52 - 1000; // insurance deduction
     }
   }
 
-   showEmployees() {
-      console.log("Employees Tracker Assignmanet 4.4 By Kari Ganson");
-      //   maybe add something here
+  // Main application class
+  class Main {
+    // constructor
+    constructor() {
+      // empty array to add employees to
+      this.employees = [];
 
+      // employees names list
+      this.employees.push(new PartTime("Jennifer Sanders", 25, 15, 10));
+      this.employees.push(new PartTime("Sally Johnson", 33, 12, 10));
+      this.employees.push(new PartTime("Jeff Ganson", 30, 17, 16));
+      this.employees.push(new Manager("Steve Thibodeaux", 40, 20, 15));
+      this.employees.push(new Manager("Brooke Barker", 20, 20, 15));
+
+      // call
+      this.displayEmployees();
+      this.menu();
+    }
+
+    // Display employee list
+    displayEmployees() {
+      console.log("Employees Tracker");
+      console.log("ID\tName\t\t\tSalary\t\tHours\tPayRate\tType");
+
+      // for each
       this.employees.forEach((emp, index) => {
         console.log(
-          `${index + 1}\t${emp.salary}\t${emp.hours}\t${emp.payRate}\t${
-            emp.employeeType
-          }`
+          `${index + 1}\t${emp.name}\t${emp.salary.toFixed(2)}\t${emp.hours}\t${
+            emp.payRate
+          }\t${emp.employeeType}`
         );
       });
     }
-  }
 
-  
+    // Add a new employee to the lise
+    addEmployee() {
+      const input = prompt(
+        "To add an employee, enter: name, age, pay rate, hours worked (separated by commas)"
+      );
 
- 
-   
-  
+      const [name, ageStr, payRateStr, hourStr] = input.split(",");
+      const age = parseInt(ageStr);
+      const payRate = parseFloat(payRateStr);
+      const hours = parseFloat(hourStr);
 
+      // adds what time of new employee the new employee you are adding is
+      let newEmployee;
+      if (hours >= 40) {
+        newEmployee = new Manager(name, age, payRate, hours);
+      } else {
+        newEmployee = new PartTime(name, age, payRate, hours);
+      }
 
-
-  
-
-
-    removeEmployhee() {
-        const input = prompt("What Employee Would You Like to Remove From The List?");
-        const id = parseInt(input);
-        if (!NaN(id)) {(
-            this.employees.splice(id - 1, 1);
-        } else {
-            this.employees.this.employees.filter(emp => emp.name.toLower)
-        }
+      // pushes new employess to list then displays them
+      this.employees.push(newEmployee);
+      this.displayEmployees();
     }
 
- 
+    // Remove an employee by ID
+    removeEmployee() {
+      const input = prompt("Enter the ID of the employee to remove:");
+      const id = parseInt(input);
 
-  // end of IIFE
+      if (!isNaN(id) && id > 0 && id <= this.employees.length) {
+        this.employees.splice(id - 1, 1);
+        console.log("Employee has been removed.");
+        this.displayEmployees();
+      } else {
+        console.log("Invalid ID.");
+      }
+    }
+
+    // function that allows user to select from the menu
+    menu() {
+      const choice = prompt(
+        "Choose an option:\n1: Add New Employee\n2: Remove an Employee\n3: Show Employees\n4: Exit Menu"
+      );
+
+      switch (choice) {
+        case "1":
+          this.addEmployee();
+          break;
+        case "2":
+          this.removeEmployee();
+          break;
+        case "3":
+          this.displayEmployees();
+          break;
+        case "4":
+          console.log("Thank you!");
+          return;
+        default:
+          console.log("Invalid option.");
+      }
+
+      // Loop back to the menu
+      this.menu();
+    }
+  }
+
+  // Start the app
+  new Main();
 })();
