@@ -81,8 +81,14 @@
       }
     }
 
+    // save employees to list
+    saveToStorage() {
+      localStorage.setItem("Employees", JSON.stringify(this.employees));
+    }
+
     // Display employee list
     displayEmployees() {
+      console.clear();
       console.log("Employees Tracker");
       console.log("ID\tName\t\t\tSalary\t\tHours\tPayRate\tType");
 
@@ -102,58 +108,70 @@
         "To add an employee to the list, enter: name, age, pay rate, hours worked (separated by commas)"
       );
 
+      // if there is no input then restart the menu option
+      if (!input) {
+        return this.menu();
+      }
+
       const [name, ageStr, payRateStr, hourStr] = input.split(",");
       const age = parseInt(ageStr);
       const payRate = parseFloat(payRateStr);
       const hours = parseFloat(hourStr);
 
-      // adds what time of new employee the new employee you are adding is
-      let newEmployee;
-      if (hours >= 40) {
-        newEmployee = new Manager(name, age, payRate, hours);
-      } else {
-        newEmployee = new PartTime(name, age, payRate, hours);
+      if (!name || isNaN(age) || isNaN(payRate) || isNaN(hours)) {
+        console.log("Something Is Missing From Your Information Try Again!");
+        return this.menu();
       }
 
-      // pushes new employess to list then displays them
-      this.employees.push(newEmployee);
-      this.displayEmployees();
-    }
+    //   // adds what time of new employee the new employee you are adding is
+    //   let newEmployee;
+    //   if (hours >= 40) {
+    //     newEmployee = new Manager(name, age, payRate, hours);
+    //   } else {
+    //     newEmployee = new PartTime(name, age, payRate, hours);
+    //   }
+
+    //   // pushes new employess to list then displays them
+    //   this.employees.push(newEmployee);
+    //   this.displayEmployees();
+    // }
 
     // Remove an employee by ID
     removeEmployee() {
       const input = prompt(
-        "Enter the ID of the employee to remove them from the list"
+        "Enter the ID of the employee to remove from the list"
       );
       const id = parseInt(input);
 
       if (!isNaN(id) && id > 0 && id <= this.employees.length) {
         this.employees.splice(id - 1, 1);
+        this.saveToStorage();
         console.log("Employee has been removed.");
         this.displayEmployees();
       } else {
         console.log("Invalid ID Please Reenter The Employee Id.");
       }
+      this.menu();
     }
 
     // function that allows user to select from the menu
     menu() {
       const choice = prompt(
-        "What would you like to accomplish:\n1: Add New Employee\n2: Remove an Employee\n3: Show Employees\n4: Exit Menu"
+        "What would you like to do? :\n1: Display Employees\n2: Add an Employee\n3: Remove Employee\n4: Exit the Menu"
       );
 
       switch (choice) {
         case "1":
-          this.addEmployee();
+          this.displayEmployess();
           break;
         case "2":
-          this.removeEmployee();
+          this.addEmployee();
           break;
         case "3":
-          this.displayEmployees();
+          this.removeEmployee();
           break;
         case "4":
-          console.log("Thank you!");
+          console.log("Good Bye!");
           return;
       }
 
