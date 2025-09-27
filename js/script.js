@@ -19,11 +19,11 @@
       this.payRate = payRate;
       this.hours = hours;
       this.employeeType = "Part-Time";
-      this.calculatePartTimePay();
+      this.calculateSalary();
     }
 
     // pay for part time employee
-    calculatePartTimePay() {
+    calculateSalary() {
       this.salary = this.payRate * this.hours * 52;
     }
   }
@@ -36,10 +36,10 @@
       this.payRate = payRate;
       this.hours = hours;
       this.employeeType = "Manager";
-      this.calculateManagerPay();
+      this.calculateSalary();
     }
 
-    calculateManagerPay() {
+    calculateSalary() {
       this.salary = this.payRate * this.hours * 52 - 1000; // insurance deduction
     }
   }
@@ -62,22 +62,21 @@
         this.saveToStorage();
       }
 
-      // call
-      //   this.displayEmployees();
+      // show employees
+      this.displayEmployees();
+      // start the menu
       this.menu();
     }
 
     loadFromStorage() {
       const saved = localStorage.getItem("employees");
       if (saved) {
-        const rawEmployees = JSON.parse(saved);
-        this.employees = rawEmployees.map((emp) => {
-          if (emp.employeeType === "Manager") {
-            return new Manager(emp.name, emp.age, emp.payRate, emp.hours);
-          } else {
-            return new PartTime(emp.name, emp.age, emp.payRate, emp.hours);
-          }
-        });
+        const raw = JSON.parse(saved);
+        this.employees = raw.map((emp) =>
+          emp.employeeType === "Manager"
+            ? new Manager(emp.name, emp.age, emp.payRate, emp.hours)
+            : new PartTime(emp.name, emp.age, emp.payRate, emp.hours)
+        );
       }
     }
 
@@ -95,9 +94,9 @@
       // for each
       this.employees.forEach((emp, index) => {
         console.log(
-          `${index + 1}\t${emp.name}\t${emp.salary.toFixed(2)}\t${emp.hours}\t${
-            emp.payRate
-          }\t${emp.employeeType}`
+          `${index + 1}\t${emp.name.padEnd}\t${emp.salary.toFixed(2)}\t${
+            emp.hours
+          }\t${emp.payRate}\t${emp.employeeType}`
         );
       });
     }
@@ -109,9 +108,7 @@
       );
 
       // if there is no input then restart the menu option
-      if (!input) {
-        return this.menu();
-      }
+      if (!input) return this.menu();
 
       const [name, ageStr, payRateStr, hourStr] = input.split(",");
       const age = parseInt(ageStr);
@@ -119,22 +116,21 @@
       const hours = parseFloat(hourStr);
 
       if (!name || isNaN(age) || isNaN(payRate) || isNaN(hours)) {
-        console.log("Something Is Missing From Your Information Try Again!");
+        alert("Something Is Missing From Your Information Try Again!");
         return this.menu();
       }
 
       //   // adds what time of new employee the new employee you are adding is
-      let newEmployee;
-      if (hours >= 40) {
-        newEmployee = new Manager(name, age, payRate, hours);
-      } else {
-        newEmployee = new PartTime(name, age, payRate, hours);
-      }
+      let newEmployee =
+        hours >= 40
+          ? new Manager(name, age, payRate, hours)
+          : PartTime(name, age, payRate, hours);
 
       //   // pushes new employess to list then displays them
       this.employees.push(newEmployee);
       this.saveToStorage();
-      //   this.displayEmployees();
+      alert("New Employee Added");
+      this.displayEmployees();
       this.menu();
     }
 
@@ -148,11 +144,12 @@
       if (!isNaN(id) && id > 0 && id <= this.employees.length) {
         this.employees.splice(id - 1, 1);
         this.saveToStorage();
-        console.log("Employee has been removed.");
+        alert("Employee has been removed.");
         // this.displayEmployees();
       } else {
         console.log("Invalid ID Please Reenter The Employee Id.");
       }
+      this.displayEmployees();
       this.menu();
     }
 
