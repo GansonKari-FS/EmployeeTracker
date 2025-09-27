@@ -50,7 +50,7 @@
     constructor() {
       // empty array to add employees to
       this.employees = [];
-      this.loadList();
+      this.loadFromStorage();
 
       if (this.employees.length === 0) {
         // list of inital employees names
@@ -59,7 +59,7 @@
         this.employees.push(new PartTime("Jeff Ganson", 30, 17, 16));
         this.employees.push(new Manager("Steve Thibodeaux", 40, 20, 15));
         this.employees.push(new Manager("Brooke Barker", 20, 20, 15));
-        this.saveList();
+        this.saveToStorage();
       }
 
       // call
@@ -83,7 +83,7 @@
 
     // save employees to list
     saveToStorage() {
-      localStorage.setItem("Employees", JSON.stringify(this.employees));
+      localStorage.setItem("employees", JSON.stringify(this.employees));
     }
 
     // Display employee list
@@ -123,18 +123,20 @@
         return this.menu();
       }
 
-    //   // adds what time of new employee the new employee you are adding is
-    //   let newEmployee;
-    //   if (hours >= 40) {
-    //     newEmployee = new Manager(name, age, payRate, hours);
-    //   } else {
-    //     newEmployee = new PartTime(name, age, payRate, hours);
-    //   }
+      //   // adds what time of new employee the new employee you are adding is
+      let newEmployee;
+      if (hours >= 40) {
+        newEmployee = new Manager(name, age, payRate, hours);
+      } else {
+        newEmployee = new PartTime(name, age, payRate, hours);
+      }
 
-    //   // pushes new employess to list then displays them
-    //   this.employees.push(newEmployee);
-    //   this.displayEmployees();
-    // }
+      //   // pushes new employess to list then displays them
+      this.employees.push(newEmployee);
+      this.saveToStorage();
+      //   this.displayEmployees();
+      this.menu();
+    }
 
     // Remove an employee by ID
     removeEmployee() {
@@ -147,7 +149,7 @@
         this.employees.splice(id - 1, 1);
         this.saveToStorage();
         console.log("Employee has been removed.");
-        this.displayEmployees();
+        // this.displayEmployees();
       } else {
         console.log("Invalid ID Please Reenter The Employee Id.");
       }
@@ -162,14 +164,14 @@
 
       switch (choice) {
         case "1":
-          this.displayEmployess();
+          this.displayEmployees();
           break;
         case "2":
           this.addEmployee();
-          break;
+          return;
         case "3":
           this.removeEmployee();
-          break;
+          return;
         case "4":
           console.log("Good Bye!");
           return;
