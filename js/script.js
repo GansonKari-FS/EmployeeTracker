@@ -7,19 +7,21 @@
         this.age = age;
         this.salary = 0;
       }
+      calculateSalary() {
+        // claculate salary
+      }
     }
 
-    // Part-Time class
+    // Part-Time employee class
     class PartTime extends Employee {
       constructor(name, age, pay, hrs) {
         super(name, age);
         this.pay = pay;
         this.hrs = hrs;
         this.employeeType = "Part-Time";
-        this.calculatePay();
+        this.calculateSalary();
       }
-
-      calculatePay() {
+      calculateSalary() {
         this.salary = this.pay * this.hrs * 52;
       }
     }
@@ -31,121 +33,122 @@
         this.pay = pay;
         this.hrs = hrs;
         this.employeeType = "Manager";
-        this.calculatePay();
+        this.calculateSalary();
       }
-
-      calculatePay() {
+      calculateSalary() {
         this.salary = this.pay * this.hrs * 52 - 1000; // insurance deduction
       }
     }
 
-    // Main application class
+    // Main class
     class Main {
       constructor() {
         this.employees = [];
         this.loadFromStorage();
 
         if (this.employees.length === 0) {
-          // Initialize with default employees
-          this.employees.push(new PartTime("Jennifer Sanders", 25));
-          this.employees.push(new PartTime("Sally Johnson", 33));
-          this.employees.push(new PartTime("Jeff Ganson", 30));
+          // Load some default employees
+          this.employees.push(new PartTime("Jennifer Sanders", 25, 15, 10));
+          this.employees.push(new PartTime("Sally Johnson", 33, 12, 10));
+          this.employees.push(new PartTime("Jeff Ganson", 30, 17, 16));
+          this.employees.push(new Manager("Steve Thibodeaux", 40, 20, 15));
+          this.employees.push(new Manager("Brooke Barker", 20, 20, 15));
           this.saveToStorage();
         }
 
         this.displayEmployees();
-        this.menu();
 
-        setTimeout(() => {
-          this.menu();
-        }, 500);
+        // slows the loading time for the menu
+        setTimeout(() => this.menu(), 5000);
       }
 
       loadFromStorage() {
         const saved = localStorage.getItem("employees");
         if (saved) {
           const raw = JSON.parse(saved);
-          this.employees = raw.map((emp) =>
-            emp.employeeType === "Manager"
-              ? new Manager(emp.name, emp.age, emp.pay, emp.hrs)
-              : new PartTime(emp.name, emp.age, emp.pay, emp.hrs)
-          );
+          this.employees = raw.map((emp) => {
+            if (emp.employeeType === "Manager") {
+              const m = new Manager(emp.name, emp.age, emp.pay, emp.hrs);
+              m.salary = emp.salary; // restore salary
+              return m;
+            } else {
+              const p = new PartTime(emp.name, emp.age, emp.pay, emp.hrs);
+              p.salary = emp.salary;
+              return p;
+            }
+          });
         }
       }
-
+      // save to storage
       saveToStorage() {
         localStorage.setItem("employees", JSON.stringify(this.employees));
       }
 
+      // display employees
       displayEmployees() {
         console.clear();
         console.log("Employees Tracker");
-        console.log("ID\tName\t\t\tSalary\t\tHours\tPayRate\tType");
+        console.log("ID\tName\t\tSalary\tHours\tPayRate\tType");
         this.employees.forEach((emp, index) => {
           console.log(
-            `${index + 1}\t${emp.name.padEnd(20)}\t${emp.salary.toFixed(2)}\t${
+            `${index + 1}\t${emp.name.padEnd(15)}\t${emp.salary.toFixed(2)}\t${
               emp.hrs
             }\t${emp.pay}\t${emp.employeeType}`
           );
         });
       }
 
+      // add employee
       addEmployee() {
         const input = prompt(
-          "To add an employee, enter the emplyee's: name, age, pay rate, hours worked (separated by commas)"
+          "Enter: name, age, pay rate, hours (separated by commas)"
         );
         if (!input) return this.menu();
 
         const [name, ageStr, payStr, hrsStr] = input.split(",");
-        const nameTrimmed = name.trim();
-        const age = parseInt(ageStr.trim());
-        const pay = parseFloat(payStr.trim());
-        const hrs = parseFloat(hrsStr.trim());
+        const age = parseInt(ageStr);
+        const pay = parseFloat(payStr);
+        const hrs = parseFloat(hrsStr);
 
-        if (!nameTrimmed || isNaN(age) || isNaN(pay) || isNaN(hrs)) {
-          alert("Invalid input, please try again.");
+        if (!name || isNaN(age) || isNaN(pay) || isNaN(hrs)) {
+          alert("Invalid input. Try again.");
           return this.menu();
         }
 
-        const newEmp =
-          hrs >= 40
-            ? new Manager(nameTrimmed, age, pay, hrs)
-            : new PartTime(nameTrimmed, age, pay, hrs);
+        // new employee
+        // if greater than 40 hours then is manager
+        let newEmp;
+        if (hrs >= 40) {
+          newEmp = new Manager(name, age, pay, hrs);
+        } else {
+          newEmp = new PartTime(name, age, pay, hrs);
+        }
 
+        // dush new employee to lis6
         this.employees.push(newEmp);
         this.saveToStorage();
-        alert("Employee added successfully.");
+        alert("New employee added.");
         this.displayEmployees();
         this.menu();
       }
+
+      // option to remove an employee
 
       removeEmployee() {
-        const input = prompt("Enter employee ID or Name to remove:");
-        if (!input) return this.menu();
-
-        let indexToRemove = -1;
-        const idNum = parseInt(input);
-        if (!isNaN(idNum)) {
-          if (idNum > 0 && idNum <= this.employees.length) {
-            indexToRemove = idNum - 1;
-          }
-        } else {
-          indexToRemove = this.employees.findIndex(
-            (emp) => emp.name.toLowerCase() === input.toLowerCase()
-          );
-        }
-
-        if (indexToRemove >= 0) {
-          this.employees.splice(indexToRemove, 1);
+        const input = prompt("Enter the employee ID to remove:");
+        const id = parseInt(input);
+        if (!isNaN(id) && id > 0 && id <= this.employees.length) {
+          this.employees.splice(id - 1, 1);
           this.saveToStorage();
-          alert("Employee successfully removed.");
+          alert("Employee removed.");
         } else {
-          alert("Employee not found. Please try again.");
+          alert("Invalid ID.");
         }
         this.displayEmployees();
         this.menu();
       }
 
+      // menu
       menu() {
         const choice = prompt(
           "What would you like to do? :\n1: Display Employees\n2: Add an Employee\n3: Remove Employee\n4: Exit"
@@ -168,15 +171,9 @@
             this.menu();
         }
       }
-
-      // close Main class
     }
 
     // instantiate the application
     new Main();
-
-    // close window.onload
   };
 
-  // close IIFE
-})();
